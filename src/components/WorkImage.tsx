@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { MdArrowOutward } from "react-icons/md";
+import { getAssetUrl } from "../utils/assetUrl";
 
 interface Props {
   image: string;
@@ -21,6 +22,11 @@ const WorkImage = (props: Props) => {
     }
   };
 
+  const imageSrc =
+    props.image.startsWith("http") || props.image.startsWith("//")
+      ? props.image
+      : getAssetUrl(props.image);
+
   return (
     <div className="work-image">
       <a
@@ -36,7 +42,7 @@ const WorkImage = (props: Props) => {
             <MdArrowOutward />
           </div>
         )}
-        <img src={props.image} alt={props.alt} />
+        <img src={imageSrc} alt={props.alt} />
         {isVideo && <video src={video} autoPlay muted playsInline loop></video>}
       </a>
     </div>

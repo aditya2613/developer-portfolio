@@ -1,4 +1,5 @@
 import "./styles/TechStackNew.css";
+import { getAssetUrl } from "../utils/assetUrl";
 
 interface TechItem {
   name: string;
@@ -68,7 +69,7 @@ const TechStackNew = () => {
     <div className="techstack-new">
       <div className="techstack-video-container">
         <video autoPlay loop muted playsInline className="techstack-video">
-          <source src={`${import.meta.env.BASE_URL}video/video.webm`} type="video/webm" />
+          <source src={getAssetUrl("video/video.webm")} type="video/webm" />
         </video>
         <div className="techstack-overlay"></div>
       </div>
