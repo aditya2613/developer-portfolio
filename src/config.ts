@@ -127,6 +127,7 @@ export const config = {
         email: "adityamjani@gmail.com",
         github: "https://github.com/aditya2613",
         linkedin: "https://www.linkedin.com/in/aditya-jani-01-----/",
+        twitter: "",
         instagram: ""
     },
     skills: {

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <script>
+      // SPA redirect for GitHub Pages (so BrowserRouter routes work on refresh).
+      // Sends users to /?p=<original-path> which index.html rewrites back.
+      (function () {
+        var l = window.location;
+        var repoBase = l.pathname.split("/")[1] || "";
+        var redirect =
+          l.protocol +
+          "//" +
+          l.host +
+          "/" +
+          repoBase +
+          "/?p=" +
+          encodeURIComponent(l.pathname.slice(("/" + repoBase).length) || "/") +
+          (l.search ? "&q=" + encodeURIComponent(l.search.slice(1)) : "") +
+          (l.hash ? "&h=" + encodeURIComponent(l.hash.slice(1)) : "");
+        l.replace(redirect);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
+

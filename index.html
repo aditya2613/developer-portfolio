@@ -5,6 +5,23 @@
     <!-- <link rel="icon" type="image/svg+xml" href="/" /> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redoyanul Haque - AI Developer | Python Engineer</title>
+    <script>
+      // GitHub Pages SPA redirect support (pairs with public/404.html).
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get("p");
+        if (!p) return;
+        var q = params.get("q");
+        var h = params.get("h");
+        var newUrl =
+          window.location.origin +
+          window.location.pathname.replace(/\/$/, "") +
+          p +
+          (q ? "?" + decodeURIComponent(q) : "") +
+          (h ? "#" + decodeURIComponent(h) : "");
+        window.history.replaceState(null, "", newUrl);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
