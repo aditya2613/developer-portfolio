@@ -1,6 +1,7 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
+import { config } from "./config";
 import "./App.css";
 
 const CharacterModel = lazy(() => import("./components/Character"));
@@ -13,6 +14,10 @@ import { LoadingProvider } from "./context/LoadingProvider";
 const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || undefined;
 
 const App = () => {
+  useEffect(() => {
+    document.title = `${config.developer.fullName} - ${config.developer.title}`;
+  }, []);
+
   return (
     <BrowserRouter basename={basename}>
       <Routes>
