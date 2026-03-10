@@ -1,3 +1,5 @@
+const BASE = import.meta.env.BASE_URL;
+
 export const config = {
     developer: {
         name: "Aditya",
@@ -63,7 +65,7 @@ export const config = {
             title: "Real Estate Voice Pipeline",
             category: "LLM / Automation",
             technologies: "FastAPI, LangChain, faster-whisper, Ollama, n8n, Docker",
-            image: "/images/realestate.png",
+            image: `${BASE}images/realestate.png`,
             description: "End-to-end voice-to-CRM pipeline: voice notes transcribed locally via faster-whisper → LangChain PydanticOutputParser extracts 8 structured lead fields via Ollama/Mistral → auto-synced to Airtable via n8n. Fully offline-capable with local LLM inference."
         },
         {
@@ -71,7 +73,7 @@ export const config = {
             title: "Car Dealership AI Chat Agent",
             category: "RAG / LLM",
             technologies: "FastAPI, LangChain, FAISS, Ollama, SQLite, Docker",
-            image: "/images/cardealership.png",
+            image: `${BASE}images/cardealership.png`,
             description: "RAG-powered conversational agent using LangChain ConversationalRetrievalChain with FAISS vector store. Intent detection routes queries across info, pricing, financing, and appointment booking — persisted to SQLite."
         },
         {
@@ -79,7 +81,7 @@ export const config = {
             title: "AI Article Generation Platform",
             category: "LLM / Automation",
             technologies: "FastAPI, LangChain LCEL, n8n, WordPress REST API, Docker",
-            image: "/images/article.png",
+            image: `${BASE}images/article.png`,
             description: "Multi-stage LCEL pipeline: DuckDuckGo search grounding → outline → article streamed via SSE. Automates WordPress publishing across multiple sites via n8n. Supports 4 local LLMs (Mistral, LLaMA 3.2, Phi-3, Gemma 2) via Ollama."
         },
         {
@@ -87,7 +89,7 @@ export const config = {
             title: "Figma → WordPress Theme Converter",
             category: "AI / Dev Tools",
             technologies: "FastAPI, LangChain, ChatOllama, Figma API, Docker",
-            image: "/images/figma.png",
+            image: `${BASE}images/figma.png`,
             description: "AI design-to-code pipeline: fetches Figma structure via REST API → generates complete WordPress theme using LangChain + ChatOllama. Features Monaco Editor with live preview and iterative AI refinement via natural language prompts."
         },
         {
@@ -95,7 +97,7 @@ export const config = {
             title: "Exercise Detection System",
             category: "Computer Vision",
             technologies: "Python, MediaPipe, OpenCV, FastAPI",
-            image: "/images/exercise.png",
+            image: `${BASE}images/exercise.png`,
             description: "Real-time exercise detection using MediaPipe pose estimation. Detects 10 exercises with movement tracking and gamification scoring — reduced posture errors by 30% and improved engagement by 45%."
         },
         {
@@ -103,7 +105,7 @@ export const config = {
             title: "Gun Detection System",
             category: "Computer Vision / MLOps",
             technologies: "Python, YOLOv5, MLflow, FastAPI, AWS EC2",
-            image: "/images/gun.png",
+            image: `${BASE}images/gun.png`,
             description: "YOLOv5-based gun detection trained on a custom dataset with MLflow experiment tracking and FastAPI for real-time predictions. Deployed on AWS EC2 with modular programming principles."
         },
         {
@@ -111,7 +113,7 @@ export const config = {
             title: "AI Human Chatbot",
             category: "LLM / NLP",
             technologies: "Python, GPT-3.5 Turbo, Mistral, LLaMA 3, TTS, STT",
-            image: "/images/chatbot.png",
+            image: `${BASE}images/chatbot.png`,
             description: "Advanced AI chatbot fine-tuned on GPT-3.5, Mistral, and LLaMA 3 to mimic specific individuals' communication styles. Integrated speech-to-text and TTS for fully voice-capable interactions."
         },
         {
@@ -119,7 +121,7 @@ export const config = {
             title: "Music Recommendation System",
             category: "Computer Vision / ML",
             technologies: "Python, CNN, MobileNetV2, VGG19, ResNet50",
-            image: "/images/music.png",
+            image: `${BASE}images/music.png`,
             description: "Intelligent music recommendation using real-time facial mood detection via CNN architectures. Provides personalized recommendations based on detected facial expressions."
         }
     ],
