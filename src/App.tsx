@@ -9,9 +9,12 @@ const MyWorks = lazy(() => import("./pages/MyWorks"));
 const Play = lazy(() => import("./pages/Play"));
 import { LoadingProvider } from "./context/LoadingProvider";
 
+// Match Vite base (e.g. "/developer-portfolio/" on GitHub Pages) so routes work at subpath
+const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || undefined;
+
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route
           path="/"
