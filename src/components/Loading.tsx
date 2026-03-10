@@ -92,41 +92,56 @@ const Loading = ({ percent }: { percent: number }) => {
 
 export default Loading;
 
+const PROGRESS_INTERVAL_FAST = 80;
+const MAX_WAIT_MS = 10000; // If model doesn't load in 10s, finish loading anyway
+
 export const setProgress = (setLoading: (value: number) => void) => {
   let percent: number = 0;
+  let interval: ReturnType<typeof setInterval> | null = null;
 
-  let interval = setInterval(() => {
+  const clearAll = () => {
+    if (interval) clearInterval(interval);
+    interval = null;
+  };
+
+  // Fallback: force 100% after MAX_WAIT_MS so the user is never stuck
+  const maxWait = window.setTimeout(() => {
+    clearAll();
+    setLoading(100);
+  }, MAX_WAIT_MS);
+
+  interval = setInterval(() => {
     if (percent <= 50) {
-      let rand = Math.round(Math.random() * 5);
-      percent = percent + rand;
+      percent = Math.min(50, percent + Math.round(Math.random() * 5) + 2);
       setLoading(percent);
-    } else {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        percent = percent + Math.round(Math.random());
-        setLoading(percent);
-        if (percent > 91) {
-          clearInterval(interval);
-        }
-      }, 2000);
+    } else if (percent <= 91) {
+      percent = Math.min(92, percent + Math.round(Math.random() * 2) + 1);
+      setLoading(percent);
+      if (percent >= 92) {
+        clearInterval(interval!);
+        interval = null;
+      }
     }
-  }, 100);
+  }, PROGRESS_INTERVAL_FAST);
 
   function clear() {
-    clearInterval(interval);
+    clearAll();
+    window.clearTimeout(maxWait);
     setLoading(100);
   }
 
   function loaded() {
     return new Promise<number>((resolve) => {
-      clearInterval(interval);
+      clearAll();
+      window.clearTimeout(maxWait);
       interval = setInterval(() => {
         if (percent < 100) {
-          percent++;
+          percent = Math.min(100, percent + 4);
           setLoading(percent);
         } else {
+          if (interval) clearInterval(interval);
+          interval = null;
           resolve(percent);
-          clearInterval(interval);
         }
       }, 2);
     });
