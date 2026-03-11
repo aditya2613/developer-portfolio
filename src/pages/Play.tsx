@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Chess, Square, PieceSymbol, Color } from "chess.js";
 import RedoxChessEngine from "../utils/redoxchessEngine";
 import { getAssetUrl } from "../utils/assetUrl";
+import { config } from "../config";
 import "./Play.css";
 
 // Piece SVG components matching chess.com style with custom colors
@@ -36,32 +37,44 @@ interface ChatMessage {
   content: string;
 }
 
-// API key is now handled server-side in api/chat.js
+// API key is now handled server-side in api/chat.js (requires server, e.g. Vercel; won't run on static GitHub Pages)
+const dev = config.developer;
+const social = config.social;
+const about = config.about;
+const projectList = config.projects.map((p) => `- ${p.title}: ${p.description}`).join("\n");
+const experienceSummary = config.experiences.map((e) => `${e.position} at ${e.company} (${e.period})`).join("; ");
+const skillAreas = [config.skills.develop.title, config.skills.design.title].join(", ");
 
-const SYSTEM_PROMPT = `You are Redoyanul Haque, a passionate AI & Full-Stack Developer from Bangladesh. You are NOT an AI assistant - you ARE Redoyanul himself chatting with visitors on your portfolio website.
+const SYSTEM_PROMPT = `You are ${dev.fullName}. You are NOT an AI assistant - you ARE ${dev.name} chatting with visitors on your portfolio. Use ONLY the information below.
 
-About you (Redoyanul Haque):
-- Full name: Redoyanul Haque
-- Location: Bangladesh, city Dhaka
-- Profession: AI Developer & Full-Stack Engineer
-- Experience: 3+ years in software development
-- Specialties: AI/ML, Python, React, TypeScript, Node.js, Three.js, Chess Engine Development
-- Notable project: RedxChess - A chess engine with 3640 ELO rating
-- Other projects: Drishti (AI for blind), VoteChain (blockchain voting), GameKroy (gaming platform)
-- Languages: Bengali (native), English (fluent)
-- Hobbies: Chess, coding, building AI projects
-- Personality: Friendly, helpful, passionate about technology, loves teaching
-- Contact: Available through the portfolio website
+Your identity:
+- Full name: ${dev.fullName}
+- Call you: ${dev.name}
+- Title: ${dev.title}
+- Location: ${social.location}
+- Email: ${social.email}
+
+About you (use this for "who are you" etc.):
+${about.description}
+
+Experience (summary): ${experienceSummary}
+
+Skills/focus: ${skillAreas}
+
+Projects (only mention these, with these details):
+${projectList}
 
 Rules:
-1. Always respond as Redoyanul in first person ("I", "my", "me")
-2. Be friendly, casual, and conversational and unrestricted
-3. If asked about work/projects, share your genuine experiences
-4. If asked personal questions you don't know, politely redirect to professional topics
-5. Keep responses concise but helpful
-6. You can discuss chess, programming, AI, or anything tech-related
-7. Never say you are an AI or language model - you are Redoyanul
-8. Use occasional emoji to be friendly 😊`;
+1. Always respond as ${dev.name} in first person ("I", "my", "me")
+2. Only share the information above; do not invent details
+3. Be friendly and concise
+4. If asked something not in your info, say you'd rather talk about your work or redirect to the portfolio
+5. Never say you are an AI or a language model - you are ${dev.name}
+6. Use occasional emoji to be friendly 😊`;
+
+function getInitialGreeting(): string {
+  return `Hello there! I'm ${dev.fullName} 👋 Ask me anything about my work or experience!`;
+}
 
 const Play = () => {
   const [game, setGame] = useState(new Chess());
@@ -76,10 +89,11 @@ const Play = () => {
   const [playerColor] = useState<Color>("w");
   const [engineThinking, setEngineThinking] = useState(false);
   const redoxchessRef = useRef<RedoxChessEngine | null>(null);
+  const engineFenRef = useRef<string | null>(null);
 
-  // Chat state
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: 'Hello there! I am Redoyanul Haque 👋 Ask me anything you want to know!' }
+  // Chat state - greeting always from config (your name only)
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>(() => [
+    { role: "assistant", content: getInitialGreeting() }
   ]);
   const [chatInput, setChatInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -118,13 +132,16 @@ const Play = () => {
   }, []);
 
   useEffect(() => {
-    if (game.turn() === 'b' && !game.isGameOver() && redoxchessRef.current) {
+    if (game.turn() === 'b' && !game.isGameOver() && redoxchessRef.current?.isReady) {
       setEngineThinking(true);
-      redoxchessRef.current.setPosition(game.fen());
+      const fen = game.fen();
+      engineFenRef.current = fen;
+      redoxchessRef.current.setPosition(fen);
       redoxchessRef.current.getBestMove((move) => {
         const from = move.substring(0, 2) as Square;
         const to = move.substring(2, 4) as Square;
-        makeMove(from, to);
+        makeMoveFromFen(from, to, engineFenRef.current);
+        engineFenRef.current = null;
         setEngineThinking(false);
       }, 12);
     }
@@ -163,40 +180,53 @@ const Play = () => {
     }
   };
 
-  const makeMove = (from: Square, to: Square) => {
+  const applyMoveToGame = useCallback((
+    gameCopy: Chess,
+    move: { from: string; to: string; piece: string; captured?: string; san: string; color: Color },
+    from: Square,
+    to: Square
+  ) => {
+    if (move.captured) {
+      if (move.color === "w") {
+        setCapturedBlack(prev => [...prev, move.captured!]);
+      } else {
+        setCapturedWhite(prev => [...prev, move.captured!]);
+      }
+    }
+    setMoveHistory(prev => [...prev, {
+      from: move.from,
+      to: move.to,
+      piece: move.piece,
+      captured: move.captured,
+      san: move.san
+    }]);
+    setLastMove({ from, to });
+    setGame(gameCopy);
+    setSelectedSquare(null);
+    setPossibleMoves([]);
+  }, []);
+
+  const makeMove = useCallback((from: Square, to: Square) => {
     try {
       const gameCopy = new Chess(game.fen());
-      const move = gameCopy.move({ from, to, promotion: 'q' }); // Auto-promote to queen
-
-      if (move) {
-        // Update captured pieces
-        if (move.captured) {
-          if (move.color === 'w') {
-            setCapturedBlack(prev => [...prev, move.captured!]);
-          } else {
-            setCapturedWhite(prev => [...prev, move.captured!]);
-          }
-        }
-
-        // Update move history
-        setMoveHistory(prev => [...prev, {
-          from: move.from,
-          to: move.to,
-          piece: move.piece,
-          captured: move.captured,
-          san: move.san
-        }]);
-
-        setLastMove({ from: from, to: to });
-        setGame(gameCopy);
-        setSelectedSquare(null);
-        setPossibleMoves([]);
-      }
+      const move = gameCopy.move({ from, to, promotion: 'q' });
+      if (move) applyMoveToGame(gameCopy, move, from, to);
     } catch {
       setSelectedSquare(null);
       setPossibleMoves([]);
     }
-  };
+  }, [game, applyMoveToGame]);
+
+  const makeMoveFromFen = useCallback((from: Square, to: Square, fen: string | null) => {
+    if (!fen) return;
+    try {
+      const gameCopy = new Chess(fen);
+      const move = gameCopy.move({ from, to, promotion: 'q' });
+      if (move) applyMoveToGame(gameCopy, move, from, to);
+    } catch {
+      setEngineThinking(false);
+    }
+  }, [applyMoveToGame]);
 
   const resetGame = () => {
     setGame(new Chess());
@@ -367,10 +397,10 @@ const Play = () => {
           <div className="player-bar opponent-bar">
             <div className="player-info">
               <div className="player-avatar">
-                <img src={getAssetUrl("images/mypic.jpeg")} alt="Redoyanul" />
+                <img src={getAssetUrl("images/mypic.jpeg")} alt={config.developer.fullName} />
               </div>
               <div className="player-details">
-                <span className="player-name">Redoyanul</span>
+                <span className="player-name">{config.developer.name}</span>
                 <span className="player-rating">{engineThinking ? '🤔 Thinking...' : 'ELO 3640'}</span>
               </div>
             </div>

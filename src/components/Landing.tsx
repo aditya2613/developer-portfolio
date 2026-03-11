@@ -7,6 +7,9 @@ const Landing = ({ children }: PropsWithChildren) => {
   const nameParts = config.developer.fullName.split(" ");
   const firstName = nameParts[0] || config.developer.name;
   const lastName = nameParts.slice(1).join(" ") || "";
+  const landingRoles = config.developer.landingRoles ?? config.developer.title.split(" & ");
+  const titleLine1 = landingRoles[0] ?? config.developer.title;
+  const titleLine2 = landingRoles[1] ?? "";
 
   return (
     <>
@@ -24,15 +27,17 @@ const Landing = ({ children }: PropsWithChildren) => {
           <div className="landing-info">
             <h3>An</h3>
             <h2 className="landing-info-h2">
-              <div className="landing-h2-1">AI Engineer</div>
+              <div className="landing-h2-1">{titleLine1}</div>
             </h2>
-            <h2>
-              <div className="landing-h2-info">Full-Stack Developer</div>
-            </h2>
+            {titleLine2 && (
+              <h2>
+                <div className="landing-h2-info">{titleLine2}</div>
+              </h2>
+            )}
           </div>
           {/* Mobile photo - shows only on mobile when 3D character is hidden */}
           <div className="mobile-photo">
-            <img src={getAssetUrl("images/mypicnbg.png")} alt="Redoyanul Haque" />
+            <img src={getAssetUrl("images/mypicnbg.png")} alt={config.developer.fullName} />
           </div>
         </div>
         {children}

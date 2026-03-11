@@ -3,6 +3,8 @@ export const config = {
         name: "Aditya",
         fullName: "Aditya Jani",
         title: "AI Engineer & Python Developer",
+        /** Hero lines under "An" on the landing (e.g. "AI Engineer", "RAG Engineer") */
+        landingRoles: ["AI Engineer", "RAG Engineer"],
         description: "AI Engineer with an M.S. in AI & ML and 2 years building Python-based systems in production. Specializing in LLM pipelines, RAG, Computer Vision, and workflow automation."
     },
     social: {

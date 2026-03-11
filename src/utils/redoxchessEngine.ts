@@ -1,3 +1,12 @@
+function getWorkerScriptUrl(): string {
+  if (typeof window === "undefined") return "/redoxchess.js";
+  const path = window.location.pathname;
+  const base = path === "/" || path === "" || path === "/index.html"
+    ? "/"
+    : (path.match(/^\/([^/]+)/)?.[0] ?? "") + "/";
+  return base === "/" ? "/redoxchess.js" : `${base}redoxchess.js`;
+}
+
 class RedoxChessEngine {
   private engine: Worker | null = null;
   private onMoveCallback: ((move: string) => void) | null = null;
@@ -9,7 +18,8 @@ class RedoxChessEngine {
 
   async init() {
     return new Promise<void>((resolve) => {
-      this.engine = new Worker('/redoxchess.js');
+      const scriptUrl = getWorkerScriptUrl();
+      this.engine = new Worker(scriptUrl);
 
       this.engine.onmessage = (event) => {
         const message = event.data;

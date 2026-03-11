@@ -5,10 +5,11 @@
   place-items: center;
   position: relative;
   opacity: 1;
-  height: 100vh;
+  min-height: 100vh;
   width: var(--cWidth);
   max-width: 1920px;
   margin: auto;
+  padding-bottom: 60px;
   z-index: 9;
 }
 
@@ -38,34 +39,37 @@
 
 .what-box-in {
   flex-direction: column;
-  height: 500px;
+  min-height: 580px;
+  height: auto;
   margin-left: 200px;
   position: relative;
   display: flex;
+  gap: 12px;
 }
 
 .what-content {
   width: 450px;
-  height: 33%;
-  min-height: 50%;
+  min-height: 180px;
+  flex: 0 1 auto;
   transition: 0.5s;
-  /* border: 0.5px dashed rgba(255, 255, 255, 0.3); */
   position: relative;
-  padding: 50px;
+  padding: 40px 50px 50px;
   box-sizing: border-box;
 }
 
 .what-noTouch:hover,
 .what-content-active {
-  min-height: 67%;
-  padding: 40px 50px;
+  min-height: 380px;
+  flex: 1 1 auto;
+  padding: 40px 50px 50px;
 }
 
 .what-noTouch:hover~.what-content,
 .what-box-in:hover .what-noTouch:not(:hover),
 .what-content.what-sibling {
-  min-height: 33%;
-  padding: 10px 50px;
+  min-height: 160px;
+  flex: 0 1 auto;
+  padding: 16px 50px;
 }
 
 .what-content h3 {
@@ -230,8 +234,8 @@
 }
 
 .what-content-in {
-  height: 100%;
-  overflow: hidden;
+  min-height: 0;
+  overflow: visible;
 }
 
 .what-content-in h5 {
@@ -240,7 +244,8 @@
   font-size: 12px;
   letter-spacing: 1px;
   font-family: "Geist", sans-serif;
-  margin-bottom: 5px;
+  margin-top: 16px;
+  margin-bottom: 8px;
 }
 
 @keyframes whatBorders {
@@ -282,7 +287,7 @@
   }
 
   .what-box-in {
-    height: 400px;
+    min-height: 480px;
   }
 
   .what-content h3 {
@@ -332,7 +337,7 @@
   }
 
   .what-box-in {
-    height: 500px;
+    min-height: 520px;
     margin-left: -50px;
   }
 
@@ -347,14 +352,14 @@
 
   .what-noTouch:hover,
   .what-content-active {
-    min-height: 67%;
+    min-height: 340px;
     padding: 50px;
   }
 
   .what-noTouch:hover~.what-content,
   .what-box-in:hover .what-noTouch:not(:hover),
   .what-content.what-sibling {
-    min-height: 33%;
+    min-height: 140px;
     padding: 10px 50px;
   }
 }
@@ -375,7 +380,7 @@
   }
 
   .what-box:last-child {
-    height: 500px;
+    min-height: 500px;
   }
 
   .what-box {
@@ -390,7 +395,7 @@
 
   .what-box-in {
     margin-left: 0px;
-    height: 450px;
+    min-height: 480px;
   }
 
   .what-content h5,
