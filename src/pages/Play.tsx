@@ -270,34 +270,40 @@ const Play = () => {
         { role: 'user', content: chatInput }
       ];
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
+      const chatApiUrl = config.chatApiUrl || "/api/chat";
+      const response = await fetch(chatApiUrl, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          messages: messages,
-        }),
+        body: JSON.stringify({ messages }),
       });
 
       const data = await response.json();
 
-      if (data.choices && data.choices[0]?.message?.content) {
-        const assistantMessage: ChatMessage = {
-          role: 'assistant',
-          content: data.choices[0].message.content
-        };
-        setChatMessages(prev => [...prev, assistantMessage]);
+      if (data.choices?.[0]?.message?.content) {
+        setChatMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.choices[0].message.content },
+        ]);
+      } else if (data.error) {
+        throw new Error(data.error.message || data.error);
       } else {
-        throw new Error('Invalid response');
+        throw new Error("Invalid response");
       }
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error("Chat error:", error);
+      const failedFetch =
+        (error as Error).message === "Failed to fetch" ||
+        (error as Error).name === "TypeError";
+      const hint = failedFetch && !config.chatApiUrl
+        ? "Chat needs a backend (e.g. deploy api/ to Vercel and set config.chatApiUrl)."
+        : "Try again in a moment.";
       const errorMessage: ChatMessage = {
-        role: 'assistant',
-        content: 'Sorry, having some connection issues. Try again? 😅'
+        role: "assistant",
+        content: `Sorry, chat isn't available right now. ${hint} 😅`,
       };
-      setChatMessages(prev => [...prev, errorMessage]);
+      setChatMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsTyping(false);
     }
@@ -397,7 +403,7 @@ const Play = () => {
           <div className="player-bar opponent-bar">
             <div className="player-info">
               <div className="player-avatar">
-                <img src={getAssetUrl("images/mypic.jpeg")} alt={config.developer.fullName} />
+                <img src={getAssetUrl("images/mypicnbg.png")} alt={config.developer.fullName} />
               </div>
               <div className="player-details">
                 <span className="player-name">{config.developer.name}</span>

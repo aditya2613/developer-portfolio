@@ -132,6 +132,8 @@ export const config = {
         twitter: "",
         instagram: ""
     },
+    /** Chat API URL. Required when frontend is on GitHub Pages (static). Deploy api/ to Vercel and set e.g. "https://your-app.vercel.app/api/chat". Leave empty for same-origin (Vercel or local). */
+    chatApiUrl: "",
     skills: {
         develop: {
             title: "LLM / AI ENGINEER",

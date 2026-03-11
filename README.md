@@ -54,6 +54,14 @@ npm run dev
 npm run build
 ```
 
+### Enable chat when hosted on GitHub Pages
+The "Talk with me" chat needs a backend. GitHub Pages is static, so:
+
+1. Deploy this repo (or just the `api/` folder) to [Vercel](https://vercel.com) so the `/api/chat` serverless function runs.
+2. In Vercel, set the env var **`GROQ_API_KEY`** (get a key from [Groq](https://console.groq.com)).
+3. In `src/config.ts`, set **`chatApiUrl`** to your Vercel API URL, e.g. `"https://your-app.vercel.app/api/chat"`.
+4. Rebuild and redeploy the frontend to GitHub Pages.
+
 ---
 
 ## 📁 Project Structure
